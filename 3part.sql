@@ -37,6 +37,8 @@ create table customer (
     rating_id integer references rating (rating_id) on update cascade on delete cascade,
     platform_id integer references trading_platform (platform_id) on update cascade on delete cascade,
     customer_name varchar(32) not null,
+    customer_last_name varchar(32) not null,
+    customer_nick_name varchar(32) not null,
     age integer not null check (age > 0 and age < 120),
     become_offline_time timestamp
 );
@@ -130,11 +132,11 @@ insert into trading_platform(platform_name, things_border) values('CSGO', 62000)
 insert into trading_platform(platform_name, things_border) values('CiberPunk', 63000);
 insert into trading_platform(platform_name, things_border) values('PUBG', 32000);
 --клиент
-insert into customer(avatar_id , rating_id, platform_id, customer_name, age, become_offline_time) values(1, 1, 1, 'Lexa2010', 11,'2020-12-19 10:23:54' );
-insert into customer(avatar_id , rating_id, platform_id, customer_name, age, become_offline_time) values(2, 2, 1, 'DimasMashina', 13,'2020-12-19 11:23:54' );
-insert into customer(avatar_id , rating_id, platform_id, customer_name, age, become_offline_time) values(3, 4, 1, 'sixteen', 21,'2020-11-28 22:23:54' );
-insert into customer(avatar_id , rating_id, platform_id, customer_name, age, become_offline_time) values(4, 3, 1, 'vedroid', 15,'2020-12-18 19:23:54' );
-insert into customer(avatar_id , rating_id, platform_id, customer_name, age, become_offline_time) values(5, 5, 1, 'VladKrutisna2', 14,'2020-12-19 12:23:54' );
+insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(1, 1, 1,'Alexey', 'Pismak' 'Lexa2010', 11,'2020-12-19 10:23:54' );
+insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(2, 2, 1,'Dmitriy','Afanasief', 'DimasMashina', 13,'2020-12-19 11:23:54' );
+insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(3, 4, 1, 'Evgeniy', 'Copa', 'sixteen', 21,'2020-11-28 22:23:54' );
+insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(4, 3, 1, 'Andrey', 'Shalya','vedroid', 15,'2020-12-18 19:23:54' );
+insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(5, 5, 1,  'Vlad', 'Pomelnikov', 'VladKrutisna2', 14,'2020-12-19 12:23:54' );
 --шмотки
 insert into thing(customer_id, platform_id , rarity, thing_name, price) values(1,1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7832);
 insert into thing(customer_id, platform_id , rarity, thing_name, price) values(1,1, 'Immortal', 'Rippers ', 7832);
@@ -278,7 +280,6 @@ from thing t join customer cus using(customer_id) join character cha using(thing
 
 
 
-
 CREATE OR REPLACE FUNCTION  thing_info (thing_id_find integer) returns table(thing_id integer, customer_id integer, trading_platform_id integer, is_selling boolean, rarity rarities, thing_name varchar(32), price integer) as $$
 begin
     return query select * from thing t where thing_id_find = t.thing_id;
@@ -310,4 +311,3 @@ begin
     return query select m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where m.sender_id = originator;
 end;
 $$ LANGUAGE plpgsql;  
-
