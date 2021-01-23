@@ -278,6 +278,7 @@ from thing t join customer cus using(customer_id) join character cha using(thing
 
 
 
+
 CREATE OR REPLACE FUNCTION  thing_info (thing_id_find integer) returns table(thing_id integer, customer_id integer, trading_platform_id integer, is_selling boolean, rarity rarities, thing_name varchar(32), price integer) as $$
 begin
     return query select * from thing t where thing_id_find = t.thing_id;
@@ -287,17 +288,26 @@ $$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION  message_info (lol integer) returns table(sender_id integer,recipient_id integer, content varchar) as $$
+CREATE OR REPLACE FUNCTION  message_info (originator integer) returns table(sender_id integer,recipient_id integer, content varchar) as $$
 begin
-    return query select m.sender_id, m.recipient_id, m.content from message m where (lol = m.sender_id) or (lol=m.recipient_id) ;
+    return query select m.sender_id, m.recipient_id, m.content from message m where (originator = m.sender_id) or (originator=m.recipient_id) ;
+end;
+$$ LANGUAGE plpgsql;  
+
+
+
+CREATE OR REPLACE FUNCTION  message_info_sendler_recipient (originator integer, addressee integer) returns table(sender_id integer,recipient_id integer, content varchar) as $$
+begin
+    return query select m.sender_id, m.recipient_id, m.content from message m where (originator = m.sender_id) or (addressee = m.recipient_id) ;
 end;
 $$ LANGUAGE plpgsql;  
 
 
 
 
-CREATE OR REPLACE FUNCTION  user_info (lol integer) returns table(recipient_id integer, customer_name varchar) as $$
+CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar) as $$
 begin
-    return query select m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where m.sender_id = lol;
+    return query select m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where m.sender_id = originator;
 end;
 $$ LANGUAGE plpgsql;  
+
