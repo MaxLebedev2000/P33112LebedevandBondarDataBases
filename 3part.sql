@@ -54,7 +54,7 @@ create table thing (
     thing_id serial primary key,
     customer_nick_name varchar references customer (customer_nick_name) on update cascade on delete cascade,
     platform_id integer references trading_platform (platform_id) on update cascade on delete cascade,
-    is_selling boolean default false,   
+    is_selling boolean default true,   
     rarity rarities not null,
     thing_name varchar(32) not null,
     price integer not null
@@ -137,17 +137,17 @@ insert into customer(avatar_id , rating_id, platform_id, customer_name, customer
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(4, 3, 1, 'Andrey', 'Shalya','vedroid', 15,'2020-12-18 19:23:54' );
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(5, 5, 1,  'Vlad', 'Pomelnikov', 'VladKrutisna2', 14,'2020-12-19 12:23:54' );
 --шмотки
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers Reel of ', 7832);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers ', 7832);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Mythical', 'Hunger ', 1011);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Dragonclaw Hook', 63200);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Bracers of Aeons of the ', 33400);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Sylvan Vedette', 2400);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Rippers Reel of the Crimson', 7833);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Armor of the Demon Trickster', 5600);  
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Roshan Hunter', 132900); 
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Rippers Reel of ', 7832);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Rippers ', 7832);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Mythical', 'Hunger ', 1011);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Dragonclaw Hook', 63200);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Bracers of Aeons of the ', 33400);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Sylvan Vedette', 2400);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Rippers Reel of the Crimson', 7833);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Armor of the Demon Trickster', 5600);  
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Roshan Hunter', 132900); 
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values(null,1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
 insert into thing(customer_nick_name, platform_id , is_selling, rarity, thing_name, price) values(null,1, true, 'Immortal', 'Mask of the Demon Trickster', 2000); 
 insert into thing(customer_nick_name, platform_id , is_selling, rarity, thing_name, price) values(null,1, true, 'Immortal', 'Rippers', 7832);
 insert into thing(customer_nick_name, platform_id , is_selling, rarity, thing_name, price) values(null,1, true, 'Immortal', 'Dragonclaw Hook', 63200);
