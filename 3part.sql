@@ -82,13 +82,13 @@ create table message (
     sender_nick varchar references customer (customer_nick_name) on update cascade on delete cascade,
     recipient_nick varchar references customer (customer_nick_name) on update cascade on delete cascade,
     content varchar not null,
-    send_time timestamp not null
+    send_time timestamp 
 );
 
 create table transaction (
     transaction_id serial primary key,
-    first_customer_id integer references customer (customer_id) on update cascade on delete cascade,
-    sec_customer_id integer references customer (customer_id) on update cascade on delete cascade, 
+    first_customer_nick varchar references customer (customer_nick_name) on update cascade on delete cascade,
+    sec_customer_nick varchar references customer (customer_nick_name) on update cascade on delete cascade, 
     first_thing_id integer references thing (thing_id) on update cascade on delete cascade,
     sec_thing_id integer references thing (thing_id) on update cascade on delete cascade,
     platform_id integer references trading_platform (platform_id) on update cascade on delete cascade,
@@ -172,7 +172,7 @@ insert into message(sender_nick, recipient_nick, content, send_time) values('Dim
 insert into message(sender_nick, recipient_nick, content, send_time) values('Lexa2010', 'DimasMashina', 'Не хочешь снизить цену на своего крысюка? У тебя уже месяц никто не покупает','2020-12-19 10:25:54');
 insert into message(sender_nick, recipient_nick, content, send_time) values('DimasMashina', 'Lexa2010', 'Не, у меня не горит, могу подождать','2020-12-19 10:26:54');
 --транзакции
-insert into transaction(first_customer_id , sec_customer_id , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values(1, 2, 1, null, 1, 'Sale');
+insert into transaction(first_customer_id , sec_customer_id , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values('DimasMashina', 'Lexa2010', 1, null, 1, 'Sale');
 
 --Тригер который проверяет если превышено максимальное количество вещей то добавления не происходит    
 CREATE OR REPLACE FUNCTION thing_border_prevent_proc()
@@ -228,8 +228,8 @@ RETURNS trigger AS $$
         secUserRatingID INT; 
 
     begin
-        select rating_id into firstUserRatingID  from customer where customer_id = new.first_customer_id;
-        select rating_id into secUserRatingID from customer where customer_id = new.sec_customer_id;
+        select rating_id into firstUserRatingID  from customer where customer_nick_name = new.first_customer_nick;
+        select rating_id into secUserRatingID from customer where customer_nick_name = new.sec_customer_nick;
         select transactions_num into firstUserTransact from rating
                                         where rating_id = firstUserRatingID;
         
