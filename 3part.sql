@@ -311,6 +311,40 @@ end;
 $$ LANGUAGE plpgsql;  
 
 
+CREATE OR REPLACE FUNCTION  buy_thing (first_customer_nick varchar, sec_customer_nick varchar, selling_thing_id integer) returns void as $$
+declare
+enough_money boolean;
+buyer_money integer;
+seller_money integer;
+thing_price integer;
+
+begin
+     select price into thing_price from thing t where t.id = selling_thing_id;
+     select p.customer_balance into buyer_money from customer c join paymentmethod p using(customer_nick_name) where first_customer_nick = c.customer_nick_name;
+     select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where sec_customer_nick = c.customer_nick_name;
+     if (buyer_money >= thing_price) then 
+        UPDATE thing t SET customer_nick_name = first_customer_nick, is_selling = false WHERE t.id = selling_thing_id;
+        UPDATE paymentmethod p SET customer_balance = (buyer_money - thing_price) WHERE p.customer_nick_name = first_customer_nick;
+        UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = sec_customer_nick;
+        end if;
+end;
+$$ LANGUAGE plpgsql;  
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION  customer_things (customer_nick varchar) returns  table(thing_id integer, think_name varchar, rarity rarities, customer_nick_name varchar, character_name varchar, price integer) as $$
+begin
+    return query select t.thing_id, t.thing_name, t.rarity, cus.customer_nick_name, cha.character_name, t.price from thing t join customer cus using(customer_nick_name) join character cha using(thing_id) where t.is_selling = false and cus.customer_nick_name = customer_nick;
+end;    
+$$ LANGUAGE plpgsql;  
+
+
+
+
+
 drop FUNCTION thing_info(integer);
 drop FUNCTION customer_information(varchar);
 drop FUNCTION user_comunication_info(varchar);
@@ -328,3 +362,4 @@ drop table character cascade;
 drop table customer_paymentmethod cascade;
 drop table message cascade;
 drop table transaction cascade;
+
