@@ -320,14 +320,11 @@ begin
 end;
 $$ LANGUAGE plpgsql;  
 
-
-CREATE OR REPLACE FUNCTION  buy_thing (first_customer_nick varchar, sec_customer_nick varchar, selling_thing_id integer) returns void as $$
+CREATE OR REPLACE FUNCTION  buy_thing (first_customer_nick varchar, selling_thing_id integer) returns void as $$
 declare
     enough_money boolean;
     buyer_money integer;
-    seller_money integer;
     thing_price integer;
-    seller_is_null boolean = true;
 
 begin
     select price into thing_price from thing t where t.thing_id = selling_thing_id;
@@ -335,12 +332,7 @@ begin
     if (buyer_money >= thing_price) then
         UPDATE thing t SET customer_nick_name = first_customer_nick, is_selling = false WHERE t.thing_id = selling_thing_id;
         UPDATE paymentmethod p SET customer_balance = (buyer_money - thing_price) WHERE p.customer_nick_name = first_customer_nick;
-        insert into transaction(first_customer_nick , sec_customer_nick , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values(first_customer_nick, sec_customer_nick, selling_thing_id, null, 1, 'Sale');
-        select c.customer_nick_name into seller_is_null from customer c where c.customer_nick_name = sec_customer_nick and c.customer_nick_name is null;
-        if (seller_is_null = true) then
-            select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where sec_customer_nick = c.customer_nick_name;
-            UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = sec_customer_nick;
-        end if;
+        insert into transaction(first_customer_nick , sec_customer_nick , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values(first_customer_nick, null, selling_thing_id, null, 1, 'Sale');
     end if;
 end;
 $$ LANGUAGE plpgsql;
@@ -357,6 +349,7 @@ begin
     select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where nick_name = c.customer_nick_name;
     UPDATE thing t SET is_selling = true, customer_nick_name = null WHERE t.thing_id = selling_thing_id;
     UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = nick_name;
+    insert into transaction(nick_name , sec_customer_nick , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values (null, nick_name, selling_thing_id, null, 1, 'Sale');
 
 end;
 $$ LANGUAGE plpgsql;  
