@@ -168,13 +168,12 @@ insert into character(thing_id, platform_id, character_name, attribute) values(1
 insert into character(thing_id, platform_id, character_name, attribute) values(20, 1, 'Riki', 'Agility');
 insert into character(thing_id, platform_id, character_name, attribute) values(21, 1, 'Pudge', 'Force');
 --способы оплаты клиента и баланс
-insert into paymentmethod(payment_id, customer_id) values(1,1);
-insert into customer_paymentmethod(payment_id, customer_id) values(1,3);
-insert into customer_paymentmethod(payment_id, customer_id) values(2,1);
-insert into customer_paymentmethod(payment_id, customer_id) values(3,1);
-insert into customer_paymentmethod(payment_id, customer_id) values(4,3);
-insert into customer_paymentmethod(payment_id, customer_id) values(5,2);
-insert into customer_paymentmethod(payment_id, customer_id) values(2,3);
+insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(1,'21124412421','Sberbank','Credit card', 28345);
+insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(2,'21122312421','Yandex.Money','Yandex.Money', 31345);
+insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(3,'21176542421','Sberbank','Credit card', 8345);
+insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(4,'21124413421','Citybank','Credit card', 18345);
+insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(5,'21127653421','Qiwi','QIWI', 4345);
+
 -- сообщения 
 insert into message(sender_id, recipient_id, content, send_time) values(1,2, 'Привет, как сам?','2020-12-19 10:23:54');
 insert into message(sender_id, recipient_id, content, send_time) values(2,1, 'Ку, норм. А ты ?','2020-12-19 10:24:20');
@@ -305,12 +304,6 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar) as $$
 begin
-    return query select m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where m.sender_id = originator;
-end;
-$$ LANGUAGE plpgsql;  
-
-CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar) as $$
-begin
-    return query select m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where m.sender_id = originator;
+    return query select DISTINCT m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where (m.sender_id = originator) or (m.recipient_id = originator);
 end;
 $$ LANGUAGE plpgsql;  
