@@ -24,15 +24,6 @@ create table rating (
     offense_num integer not null
 );
 
-create table paymentmethod (
-    payment_id serial primary key,
-    customer_nick_name varchar references customer (customer_nick_name) on update cascade on delete cascade,
-    credentials varchar not null,
-    paymentmethod_name varchar(32) not null,
-    paymentmethod_type paymentmethod_types not null,
-    customer_balance integer default 0
-                    CHECK (customer_balance >= 0)
-);
 
 create table customer (
     customer_id serial primary key,
@@ -49,11 +40,21 @@ create table customer (
 --create index hash_customer_id on customer using hash (customer_id);
 --create index hash_customer_nick_name on customer using hash (customer_nick_name);
 
+create table paymentmethod (
+    payment_id serial primary key,
+    customer_nick_name varchar references customer (customer_nick_name) on update cascade on delete cascade,
+    credentials varchar not null,
+    paymentmethod_name varchar(32) not null,
+    paymentmethod_type paymentmethod_types not null,
+    customer_balance integer default 0
+                    CHECK (customer_balance >= 0)
+);
+
 create table thing (
     thing_id serial primary key,
     customer_nick_name varchar references customer (customer_nick_name) on update cascade on delete cascade,
     platform_id integer references trading_platform (platform_id) on update cascade on delete cascade,
-    is_selling boolean default true,   
+    is_selling boolean default false,   
     rarity rarities not null,
     thing_name varchar(32) not null,
     price integer not null
@@ -147,6 +148,13 @@ insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) v
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Roshan Hunter', 132900); 
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
+insert into thing(customer_nick_name, platform_id , is_selling, rarity, thing_name, price) values(null,1, true, 'Immortal', 'Mask of the Demon Trickster', 2000); 
+insert into thing(customer_nick_name, platform_id , is_selling, rarity, thing_name, price) values(null,1, true, 'Immortal', 'Rippers', 7832);
+insert into thing(customer_nick_name, platform_id , is_selling, rarity, thing_name, price) values(null,1, true, 'Immortal', 'Dragonclaw Hook', 63200);
+insert into thing(customer_nick_name, platform_id , is_selling, rarity, thing_name, price) values(null,1, true, 'Immortal', 'Sylvan Vedetter', 2400);
+
+
+
 
 --бонусы
 insert into bonus(thing_id, rating_scale) values(1, 9500); 
@@ -349,7 +357,7 @@ begin
     UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = nick_name;
 
 end;
-$$ LANGUAGE plpgsql; 
+$$ LANGUAGE plpgsql;  
 
 
 CREATE OR REPLACE FUNCTION  remove_for_sale (selling_thing_id integer) returns void as $$
@@ -388,3 +396,4 @@ drop table character cascade;
 drop table customer_paymentmethod cascade;
 drop table message cascade;
 drop table transaction cascade;
+
