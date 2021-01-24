@@ -26,7 +26,7 @@ create table rating (
 
 create table paymentmethod (
     payment_id serial primary key,
-    customer_id references customer (customer_id) on update cascade on delete cascade,
+    customer_id integer references customer (customer_id) on update cascade on delete cascade,
     credentials varchar not null,
     paymentmethod_name varchar(32) not null,
     paymentmethod_type paymentmethod_types not null,
@@ -46,7 +46,7 @@ create table customer (
     become_offline_time timestamp
 );
 
-create index hash_customer_id on customer using hash (customer_id);
+--create index hash_customer_id on customer using hash (customer_id);
 
 create table thing (
     thing_id serial primary key,
@@ -57,7 +57,7 @@ create table thing (
     thing_name varchar(32) not null,
     price integer not null
 );
-create index hash_thing_id on thing using hash (thing_id);  
+--create index hash_thing_id on thing using hash (thing_id);  
 -- основные операции будут транзакции, где нужно будет находить пользователей и вещи по id, поэтому имеет смысл сделать hash  индексы для этих полей, тк они оптимальны 
 --для операций равенства
 
@@ -75,7 +75,7 @@ create table character (
     character_name varchar(32) not null,
     attribute attributes not null
 );
-create index hash_character_id on character using hash (character_id);
+--create index hash_character_id on character using hash (character_id);
 
 create table message (
     message_id serial primary key,
@@ -116,13 +116,6 @@ insert into rating(rating_num, transactions_num, time_decrease_const, offense_nu
 insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(5, 9638,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
 insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(6, 9502,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
 insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(7, 9489,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
---способ оплаты
-insert into paymentmethod(credentials, paymentmethod_name, paymentmethod_type) values('12923094340', 'Sberbank', 'Credit card');
-insert into paymentmethod(credentials, paymentmethod_name, paymentmethod_type) values('12924094340', 'Citybank', 'Credit card');
-insert into paymentmethod(credentials, paymentmethod_name, paymentmethod_type) values('12456094340', 'QIWI',     'Credit card');
-insert into paymentmethod(credentials, paymentmethod_name, paymentmethod_type) values('12325943440', 'Yandex.Money', 'Yandex.Money');
-insert into paymentmethod(credentials, paymentmethod_name, paymentmethod_type) values('12765345640', 'Yandex.Money', 'Yandex.Money');
-insert into paymentmethod(credentials, paymentmethod_name, paymentmethod_type) values('12945094340', 'Bitcoins', 'WebMoney');
 --торговая площадка
 insert into trading_platform(platform_name, things_border) values('Dota2', 60000);
 insert into trading_platform(platform_name, things_border) values('CSGO', 62000);
@@ -267,7 +260,7 @@ CREATE OR REPLACE FUNCTION  user_exit (customer_id integer) returns void as $$
     end;
     $$ LANGUAGE plpgsql;
 
-create index "customer_id_index" on customer using hash("customer_id");
+--create index "customer_id_index" on customer using hash("customer_id");
 
 create view things_view 
 as  select t.thing_id, t.thing_name, t.rarity, cus.customer_nick_name, cha.character_name, t.price
@@ -305,5 +298,14 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar) as $$
 begin
     return query select DISTINCT m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where (m.sender_id = originator) or (m.recipient_id = originator);
+end;
+$$ LANGUAGE plpgsql;  
+
+
+
+
+CREATE OR REPLACE FUNCTION  customer_information (customer_nick varchar) returns table(customer_id integer,  customer_nick_name varchar, customer_name varchar,  customer_last_name varchar, link_photo  varchar, rating_num integer, credentials varchar, paymentmethod_type paymentmethod_types, customer_balance integer) as $$
+begin
+    return query select c.customer_id, c.customer_nick_name, c.customer_name, c.customer_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_id);
 end;
 $$ LANGUAGE plpgsql;  
