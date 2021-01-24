@@ -338,6 +338,7 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION  put_up_for_sale (nick_name varchar,selling_thing_id integer) returns void as $$
+declare
 seller_money integer;
 thing_price integer;
 
