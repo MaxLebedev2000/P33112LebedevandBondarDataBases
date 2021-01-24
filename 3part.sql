@@ -316,7 +316,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION  customer_information (customer_nick varchar) returns table(customer_id integer, age integer,  customer_nick_name varchar, customer_name varchar,  customer_last_name varchar, link_photo  varchar, rating_num integer, credentials varchar, paymentmethod_type paymentmethod_types, customer_balance integer) as $$
 begin
-    return query select c.customer_id, c.age c.customer_nick_name, c.customer_name, c.customer_last_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_nick_name) where c.customer_nick_name = customer_nick;
+    return query select c.customer_id, c.age, c.customer_nick_name, c.customer_name, c.customer_last_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_nick_name) where c.customer_nick_name = customer_nick;
 end;
 $$ LANGUAGE plpgsql;  
 
