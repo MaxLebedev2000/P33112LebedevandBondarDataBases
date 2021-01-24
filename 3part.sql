@@ -349,7 +349,7 @@ begin
     select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where nick_name = c.customer_nick_name;
     UPDATE thing t SET is_selling = true, customer_nick_name = null WHERE t.thing_id = selling_thing_id;
     UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = nick_name;
-    insert into transaction(nick_name , sec_customer_nick , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values (null, nick_name, selling_thing_id, null, 1, 'Sale');
+    insert into transaction(first_customer_nick , sec_customer_nick , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values (null, nick_name, selling_thing_id, null, 1, 'Sale');
 
 end;
 $$ LANGUAGE plpgsql;  
