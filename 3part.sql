@@ -128,19 +128,17 @@ insert into customer(avatar_id , rating_id, platform_id, customer_name, customer
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(4, 3, 1, 'Andrey', 'Shalya','vedroid', 15,'2020-12-18 19:23:54' );
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(5, 5, 1,  'Vlad', 'Pomelnikov', 'VladKrutisna2', 14,'2020-12-19 12:23:54' );
 --шмотки
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7832);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers Reel of the ', 7832);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers ', 7832);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Mythical', 'Hunger ofthe Howling Wilds', 1011);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Dragonclaw Hook', 63200);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Bracers of Aeons of the Crimson Witness', 33400);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Bracers of Aeons of the ', 33400);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Sylvan Vedette', 2400);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7833);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Rippers Reel of the ', 7833);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Armor of the Demon Trickster', 5600);  
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Roshan Hunter', 132900); 
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
-
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Legendary', 'Roshan Hunter', 132900); 
 --бонусы
 insert into bonus(thing_id, rating_scale) values(1, 9500); 
 -- персонажи 
@@ -156,10 +154,6 @@ insert into character(thing_id, platform_id, character_name, attribute) values(9
 insert into character(thing_id, platform_id, character_name, attribute) values(10, 1, 'Monkey King', 'Agility');
 
 
-
-insert into character(thing_id, platform_id, character_name, attribute) values(19, 1, 'Pudge', 'Force'); 
-insert into character(thing_id, platform_id, character_name, attribute) values(20, 1, 'Riki', 'Agility');
-insert into character(thing_id, platform_id, character_name, attribute) values(21, 1, 'Pudge', 'Force');
 --способы оплаты клиента и баланс
 insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('Lexa2010','21124412421','Sberbank','Credit card', 28345);
 insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('DimasMashina','21122312421','Yandex.Money','Yandex.Money', 31345);
