@@ -280,9 +280,9 @@ CREATE OR REPLACE FUNCTION  user_exit (customer_id integer) returns void as $$
 
 --create index "customer_id_index" on customer using hash("customer_id");
 
-create view things_view 
-as  select t.thing_id, t.thing_name, t.rarity, cus.customer_nick_name, cha.character_name, t.price
-from thing t join customer cus using(customer_nick_name) join character cha using(thing_id) where t.is_selling = true;
+create view things_view
+as  select t.thing_id, t.thing_name, t.rarity, cha.character_name, t.price
+    from thing t join character cha using(thing_id) where t.is_selling = true;
 
 
 
