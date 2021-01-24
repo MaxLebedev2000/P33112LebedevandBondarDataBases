@@ -26,7 +26,7 @@ create table rating (
 
 create table paymentmethod (
     payment_id serial primary key,
-    customer_id integer references customer (customer_id) on update cascade on delete cascade,
+    customer_nick_name varchar references customer (customer_nick_name) on update cascade on delete cascade,
     credentials varchar not null,
     paymentmethod_name varchar(32) not null,
     paymentmethod_type paymentmethod_types not null,
@@ -41,7 +41,7 @@ create table customer (
     platform_id integer references trading_platform (platform_id) on update cascade on delete cascade,
     customer_name varchar(32) not null,
     customer_last_name varchar(32) not null,
-    customer_nick_name varchar(32) not null,
+    customer_nick_name varchar(32) not null unique,
     age integer not null check (age > 0 and age < 120),
     become_offline_time timestamp
 );
@@ -50,7 +50,7 @@ create table customer (
 
 create table thing (
     thing_id serial primary key,
-    customer_id integer references customer (customer_id) on update cascade on delete cascade,
+    customer_nick_name varchar references customer (customer_nick_name) on update cascade on delete cascade,
     platform_id integer references trading_platform (platform_id) on update cascade on delete cascade,
     is_selling boolean default true,   
     rarity rarities not null,
@@ -79,8 +79,8 @@ create table character (
 
 create table message (
     message_id serial primary key,
-    sender_id integer references customer (customer_id) on update cascade on delete cascade,
-    recipient_id integer references customer (customer_id) on update cascade on delete cascade,
+    sender_nick varchar references customer (customer_nick_name) on update cascade on delete cascade,
+    recipient_nick varchar references customer (customer_nick_name) on update cascade on delete cascade,
     content varchar not null,
     send_time timestamp not null
 );
@@ -122,25 +122,25 @@ insert into trading_platform(platform_name, things_border) values('CSGO', 62000)
 insert into trading_platform(platform_name, things_border) values('CiberPunk', 63000);
 insert into trading_platform(platform_name, things_border) values('PUBG', 32000);
 --клиент
-insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(1, 1, 1,'Alexey', 'Pismak' 'Lexa2010', 11,'2020-12-19 10:23:54' );
+insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(1, 1, 1,'Alexey', 'Pismak', 'Lexa2010', 11,'2020-12-19 10:23:54' );
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(2, 2, 1,'Dmitriy','Afanasief', 'DimasMashina', 13,'2020-12-19 11:23:54' );
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(3, 4, 1, 'Evgeniy', 'Copa', 'sixteen', 21,'2020-11-28 22:23:54' );
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(4, 3, 1, 'Andrey', 'Shalya','vedroid', 15,'2020-12-18 19:23:54' );
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(5, 5, 1,  'Vlad', 'Pomelnikov', 'VladKrutisna2', 14,'2020-12-19 12:23:54' );
 --шмотки
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(1,1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7832);
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(1,1, 'Immortal', 'Rippers ', 7832);
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(2,1, 'Mythical', 'Hunger ofthe Howling Wilds', 1011);
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(3,1, 'Immortal', 'Dragonclaw Hook', 63200);
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(4,1, 'Immortal', 'Bracers of Aeons of the Crimson Witness', 33400);
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(5,1, 'Immortal', 'Sylvan Vedette', 2400);
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(4,1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7833);
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(5,1, 'Immortal', 'Armor of the Demon Trickster', 5600);  
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(2,1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(2,1, 'Immortal', 'Roshan Hunter', 132900); 
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(3,1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7832);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers ', 7832);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Mythical', 'Hunger ofthe Howling Wilds', 1011);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Dragonclaw Hook', 63200);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Bracers of Aeons of the Crimson Witness', 33400);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Sylvan Vedette', 2400);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7833);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Armor of the Demon Trickster', 5600);  
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Roshan Hunter', 132900); 
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
 
-insert into thing(customer_id, platform_id , rarity, thing_name, price) values(1,1, 'Legendary', 'Roshan Hunter', 132900); 
+insert into thing(customer_id, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Legendary', 'Roshan Hunter', 132900); 
 --бонусы
 insert into bonus(thing_id, rating_scale) values(1, 9500); 
 -- персонажи 
@@ -161,17 +161,17 @@ insert into character(thing_id, platform_id, character_name, attribute) values(1
 insert into character(thing_id, platform_id, character_name, attribute) values(20, 1, 'Riki', 'Agility');
 insert into character(thing_id, platform_id, character_name, attribute) values(21, 1, 'Pudge', 'Force');
 --способы оплаты клиента и баланс
-insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(1,'21124412421','Sberbank','Credit card', 28345);
-insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(2,'21122312421','Yandex.Money','Yandex.Money', 31345);
-insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(3,'21176542421','Sberbank','Credit card', 8345);
-insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(4,'21124413421','Citybank','Credit card', 18345);
-insert into paymentmethod(customer_id, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(5,'21127653421','Qiwi','QIWI', 4345);
+insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('Lexa2010','21124412421','Sberbank','Credit card', 28345);
+insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('DimasMashina','21122312421','Yandex.Money','Yandex.Money', 31345);
+insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('sixteen','21176542421','Sberbank','Credit card', 8345);
+insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('vedroid','21124413421','Citybank','Credit card', 18345);
+insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('VladKrutisna2','21127653421','Qiwi','QIWI', 4345);
 
 -- сообщения 
-insert into message(sender_id, recipient_id, content, send_time) values(1,2, 'Привет, как сам?','2020-12-19 10:23:54');
-insert into message(sender_id, recipient_id, content, send_time) values(2,1, 'Ку, норм. А ты ?','2020-12-19 10:24:20');
-insert into message(sender_id, recipient_id, content, send_time) values(1,2, 'Не хочешь снизить цену на своего крысюка? У тебя уже месяц никто не покупает','2020-12-19 10:25:54');
-insert into message(sender_id, recipient_id, content, send_time) values(2,1, 'Не, у меня не горит, могу подождать','2020-12-19 10:26:54');
+insert into message(sender_nick, recipient_nick, content, send_time) values('Lexa2010', 'DimasMashina', 'Привет, как сам?','2020-12-19 10:23:54');
+insert into message(sender_nick, recipient_nick, content, send_time) values('DimasMashina', 'Lexa2010', 'Ку, норм. А ты ?','2020-12-19 10:24:20');
+insert into message(sender_nick, recipient_nick, content, send_time) values('Lexa2010', 'DimasMashina', 'Не хочешь снизить цену на своего крысюка? У тебя уже месяц никто не покупает','2020-12-19 10:25:54');
+insert into message(sender_nick, recipient_nick, content, send_time) values('DimasMashina', 'Lexa2010', 'Не, у меня не горит, могу подождать','2020-12-19 10:26:54');
 --транзакции
 insert into transaction(first_customer_id , sec_customer_id , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values(1, 2, 1, null, 1, 'Sale');
 
@@ -264,7 +264,7 @@ CREATE OR REPLACE FUNCTION  user_exit (customer_id integer) returns void as $$
 
 create view things_view 
 as  select t.thing_id, t.thing_name, t.rarity, cus.customer_nick_name, cha.character_name, t.price
-from thing t join customer cus using(customer_id) join character cha using(thing_id) where t.is_selling = true;
+from thing t join customer cus using(customer_nick_name) join character cha using(thing_id) where t.is_selling = true;
 
 
 
@@ -277,35 +277,37 @@ $$ LANGUAGE plpgsql;
 
 
 
-
-CREATE OR REPLACE FUNCTION  message_info (originator integer) returns table(sender_id integer,recipient_id integer, content varchar) as $$
+CREATE OR REPLACE FUNCTION  message_info_sendler_recipient (originator_nick varchar, addressee_nick varchar) returns table(sender_nick varchar,recipient_nick varchar, content varchar, send_time timestamp ) as $$
 begin
-    return query select m.sender_id, m.recipient_id, m.content from message m where (originator = m.sender_id) or (originator=m.recipient_id) ;
+    return query select m.sender_nick, m.recipient_nick, m.content, m.send_time from message m where ((originator_nick = m.sender_nick) and (addressee_nick = m.recipient_nick)) or ((addressee_nick = m.sender_nick) and (originator_nick = m.recipient_nick));
 end;
 $$ LANGUAGE plpgsql;  
 
-
-
-CREATE OR REPLACE FUNCTION  message_info_sendler_recipient (originator integer, addressee integer) returns table(sender_id integer,recipient_id integer, content varchar) as $$
-begin
-    return query select m.sender_id, m.recipient_id, m.content from message m where (originator = m.sender_id) or (addressee = m.recipient_id) ;
-end;
-$$ LANGUAGE plpgsql;  
-
-
-
-
-CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar, customer_nick_name varchar, customer_last_name varchar) as $$
-begin
-    return query select DISTINCT m.recipient_id, c.customer_name, c.customer_nick_name, c.customer_last_name from message m join customer c  on (m.recipient_id = c.customer_id) where (m.sender_id = originator) or (m.recipient_id = originator);
-end;
-$$ LANGUAGE plpgsql;  
 
 
 
 
 CREATE OR REPLACE FUNCTION  customer_information (customer_nick varchar) returns table(customer_id integer,  customer_nick_name varchar, customer_name varchar,  customer_last_name varchar, link_photo  varchar, rating_num integer, credentials varchar, paymentmethod_type paymentmethod_types, customer_balance integer) as $$
 begin
-    return query select c.customer_id, c.customer_nick_name, c.customer_name, c.customer_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_id);
+    return query select c.customer_id, c.customer_nick_name, c.customer_name, c.customer_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_nick_name) where c.customer_nick_name = customer_nick;
 end;
 $$ LANGUAGE plpgsql;  
+
+
+drop FUNCTION thing_info(integer);
+drop FUNCTION customer_information(varchar);
+drop FUNCTION user_comunication_info(varchar);
+drop FUNCTION message_info_sendler_recipient(varchar,varchar);
+drop FUNCTION message_info(integer);
+
+drop table trading_platform cascade;
+drop table avatar cascade;
+drop table rating cascade;
+drop table paymentmethod cascade;
+drop table customer cascade;
+drop table thing cascade;
+drop table bonus cascade;
+drop table character cascade;
+drop table customer_paymentmethod cascade;
+drop table message cascade;
+drop table transaction cascade;
