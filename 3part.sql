@@ -317,19 +317,38 @@ enough_money boolean;
 buyer_money integer;
 seller_money integer;
 thing_price integer;
+seller_is_null boolean = true;
 
 begin
      select price into thing_price from thing t where t.id = selling_thing_id;
      select p.customer_balance into buyer_money from customer c join paymentmethod p using(customer_nick_name) where first_customer_nick = c.customer_nick_name;
-     select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where sec_customer_nick = c.customer_nick_name;
      if (buyer_money >= thing_price) then 
         UPDATE thing t SET customer_nick_name = first_customer_nick, is_selling = false WHERE t.id = selling_thing_id;
         UPDATE paymentmethod p SET customer_balance = (buyer_money - thing_price) WHERE p.customer_nick_name = first_customer_nick;
-        UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = sec_customer_nick;
+             select c.customer_nick_name into seller_is_null from customer c where c.customer_nick_name = sec_customer_nick and c.customer_nick_name is null;
+             if (seller_is_null) then 
+             select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where sec_customer_nick = c.customer_nick_name;
+             UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = sec_customer_nick;
+             end if;
         end if;
 end;
 $$ LANGUAGE plpgsql;  
 
+
+
+
+CREATE OR REPLACE FUNCTION  put_up_for_sale (selling_thing_id integer) returns void as $$
+begin
+    UPDATE thing t SET is_selling = true WHERE t.id = selling_thing_id;
+end;
+$$ LANGUAGE plpgsql;  
+
+
+CREATE OR REPLACE FUNCTION  remove_for_sale (selling_thing_id integer) returns void as $$
+begin
+    UPDATE thing t SET is_selling = false WHERE t.id = selling_thing_id;
+end;
+$$ LANGUAGE plpgsql; 
 
 
 
@@ -362,4 +381,6 @@ drop table character cascade;
 drop table customer_paymentmethod cascade;
 drop table message cascade;
 drop table transaction cascade;
+
+
 
