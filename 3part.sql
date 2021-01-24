@@ -295,9 +295,9 @@ $$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar) as $$
+CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar, customer_nick_name varchar, customer_last_name varchar) as $$
 begin
-    return query select DISTINCT m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where (m.sender_id = originator) or (m.recipient_id = originator);
+    return query select DISTINCT m.recipient_id, c.customer_name, c.customer_nick_name, c.customer_last_name from message m join customer c  on (m.recipient_id = c.customer_id) where (m.sender_id = originator) or (m.recipient_id = originator);
 end;
 $$ LANGUAGE plpgsql;  
 
