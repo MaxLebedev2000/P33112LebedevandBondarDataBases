@@ -26,9 +26,12 @@ create table rating (
 
 create table paymentmethod (
     payment_id serial primary key,
+    customer_id references customer (customer_id) on update cascade on delete cascade,
     credentials varchar not null,
     paymentmethod_name varchar(32) not null,
-    paymentmethod_type paymentmethod_types not null
+    paymentmethod_type paymentmethod_types not null,
+    customer_balance integer default 0
+                    CHECK (customer_balance >= 0)
 );
 
 create table customer (
@@ -73,12 +76,6 @@ create table character (
     attribute attributes not null
 );
 create index hash_character_id on character using hash (character_id);
-
-create table customer_paymentmethod (
-    payment_id integer references paymentmethod (payment_id) on update cascade on delete cascade,
-    customer_id integer references customer (customer_id) on update cascade on delete cascade,
-    constraint customer_paymentmethod_pk primary key(customer_id, payment_id)
-);
 
 create table message (
     message_id serial primary key,
@@ -170,8 +167,8 @@ insert into character(thing_id, platform_id, character_name, attribute) values(1
 insert into character(thing_id, platform_id, character_name, attribute) values(19, 1, 'Pudge', 'Force'); 
 insert into character(thing_id, platform_id, character_name, attribute) values(20, 1, 'Riki', 'Agility');
 insert into character(thing_id, platform_id, character_name, attribute) values(21, 1, 'Pudge', 'Force');
---способы оплаты клиента
-insert into customer_paymentmethod(payment_id, customer_id) values(1,1);
+--способы оплаты клиента и баланс
+insert into paymentmethod(payment_id, customer_id) values(1,1);
 insert into customer_paymentmethod(payment_id, customer_id) values(1,3);
 insert into customer_paymentmethod(payment_id, customer_id) values(2,1);
 insert into customer_paymentmethod(payment_id, customer_id) values(3,1);
@@ -305,6 +302,12 @@ $$ LANGUAGE plpgsql;
 
 
 
+
+CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar) as $$
+begin
+    return query select m.recipient_id, c.customer_name from message m join customer c  on (m.recipient_id = c.customer_id) where m.sender_id = originator;
+end;
+$$ LANGUAGE plpgsql;  
 
 CREATE OR REPLACE FUNCTION  user_info (originator integer) returns table(recipient_id integer, customer_name varchar) as $$
 begin
