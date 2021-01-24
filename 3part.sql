@@ -345,7 +345,7 @@ thing_price integer;
 begin
     select price into thing_price from thing t where t.thing_id = selling_thing_id;
     select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where nick_name = c.customer_nick_name;
-    UPDATE thing t SET is_selling = true, t.customer_nick = null WHERE t.id = selling_thing_id;
+    UPDATE thing t SET is_selling = true, customer_nick_name = null WHERE t.thing_id = selling_thing_id;
     UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = nick_name;
 
 end;
