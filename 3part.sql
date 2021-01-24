@@ -18,7 +18,7 @@ create table avatar (
 
 create table rating (
     rating_id serial primary key,
-    rating_num integer not null check(rating_num > 0 and rating_num < 10000) default 1,
+    rating_num integer not null check(rating_num > 0) default 1,
     transactions_num integer not null,
     time_decrease_const timestamp not null,
     offense_num integer not null
