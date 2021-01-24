@@ -47,6 +47,7 @@ create table customer (
 );
 
 --create index hash_customer_id on customer using hash (customer_id);
+--create index hash_customer_nick_name on customer using hash (customer_nick_name);
 
 create table thing (
     thing_id serial primary key,
@@ -84,6 +85,9 @@ create table message (
     content varchar not null,
     send_time timestamp 
 );
+--create index hash_sender_nick on message using hash (sender_nick);
+--create index hash_recipient_nick on message using hash (recipient_nick);
+--create index hash_message_id on message using hash (message_id);
 
 create table transaction (
     transaction_id serial primary key,
@@ -95,6 +99,10 @@ create table transaction (
     description varchar,
     transaction_type transaction_types not null
 );
+--create index hash_transaction_id on transaction using hash (transaction_id);
+--create index hash_first_customer_nick on transaction using hash (first_customer_nick);
+--create index hash_sec_customer_nick on transaction using hash (sec_customer_nick);
+--create index hash_first_thing_id on transaction using hash (first_thing_id);
 
 
 -- аватары
