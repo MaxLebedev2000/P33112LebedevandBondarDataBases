@@ -360,6 +360,15 @@ end;
 $$ LANGUAGE plpgsql; 
 
 
+CREATE OR REPLACE FUNCTION  register (avatar_id integer, customer_name varchar, customer_last_name varchar, customer_nick varchar, age integer ) returns void as $$
+declare
+new_rating_id integer;
+begin
+    insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(0, 0,null ,0);
+    SELECT currval('rating_id') into new_rating_id from rating;
+    insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(avatar_id, new_rating_id, 1,  customer_name, customer_last_name, customer_nick, age, null );
+end;
+$$ LANGUAGE plpgsql;
 
 
 
