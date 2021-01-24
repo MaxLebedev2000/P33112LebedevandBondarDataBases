@@ -259,6 +259,7 @@ RETURNS trigger AS $$
         update rating
             set transactions_num = (secUserTransact + 1)
         where rating_id = secUserRatingID;
+        return new;
     end;
  $$ LANGUAGE plpgsql;
 
