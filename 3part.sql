@@ -211,10 +211,11 @@ CREATE OR REPLACE FUNCTION message_time_proc()
 RETURNS trigger AS $$
     begin
        new.send_time = CURRENT_TIMESTAMP;
+       return new;
     end;
  $$ LANGUAGE plpgsql;
 
-create trigger message_time_trigger before insert on rating FOR EACH ROW EXECUTE PROCEDURE message_time_proc();
+create trigger message_time_trigger before insert on message FOR EACH ROW EXECUTE PROCEDURE message_time_proc();
 
 
 --Тригер инкрементирующий атрибут транзакций рейтинга
