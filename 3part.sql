@@ -128,17 +128,18 @@ insert into customer(avatar_id , rating_id, platform_id, customer_name, customer
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(4, 3, 1, 'Andrey', 'Shalya','vedroid', 15,'2020-12-18 19:23:54' );
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(5, 5, 1,  'Vlad', 'Pomelnikov', 'VladKrutisna2', 14,'2020-12-19 12:23:54' );
 --шмотки
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers Reel of the ', 7832);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7832);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers ', 7832);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Mythical', 'Hunger ofthe Howling Wilds', 1011);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Dragonclaw Hook', 63200);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Bracers of Aeons of the ', 33400);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Bracers of Aeons of the Crimson Witness', 33400);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Sylvan Vedette', 2400);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Rippers Reel of the ', 7833);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7833);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Armor of the Demon Trickster', 5600);  
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Roshan Hunter', 132900); 
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
+
 --бонусы
 insert into bonus(thing_id, rating_scale) values(1, 9500); 
 -- персонажи 
@@ -154,6 +155,10 @@ insert into character(thing_id, platform_id, character_name, attribute) values(9
 insert into character(thing_id, platform_id, character_name, attribute) values(10, 1, 'Monkey King', 'Agility');
 
 
+
+insert into character(thing_id, platform_id, character_name, attribute) values(19, 1, 'Pudge', 'Force'); 
+insert into character(thing_id, platform_id, character_name, attribute) values(20, 1, 'Riki', 'Agility');
+insert into character(thing_id, platform_id, character_name, attribute) values(21, 1, 'Pudge', 'Force');
 --способы оплаты клиента и баланс
 insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('Lexa2010','21124412421','Sberbank','Credit card', 28345);
 insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('DimasMashina','21122312421','Yandex.Money','Yandex.Money', 31345);
@@ -279,11 +284,20 @@ $$ LANGUAGE plpgsql;
 
 
 
+CREATE OR REPLACE FUNCTION  customer_contacts (customer_nick varchar) returns table(people_nick varchar) as $$
+begin
+    return query select distinct sender_nick from message m where customer_nick = recipient_nick 
+            union select distinct recipient_nick from message m where customer_nick = sender_nick;
+end;
+$$ LANGUAGE plpgsql;  
+
+
+
 
 
 CREATE OR REPLACE FUNCTION  customer_information (customer_nick varchar) returns table(customer_id integer,  customer_nick_name varchar, customer_name varchar,  customer_last_name varchar, link_photo  varchar, rating_num integer, credentials varchar, paymentmethod_type paymentmethod_types, customer_balance integer) as $$
 begin
-    return query select c.customer_id, c.customer_nick_name, c.customer_name, c.customer_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_nick_name) where c.customer_nick_name = customer_nick;
+    return query select c.customer_id, c.customer_nick_name, c.customer_name, c.customer_last_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_nick_name) where c.customer_nick_name = customer_nick;
 end;
 $$ LANGUAGE plpgsql;  
 
