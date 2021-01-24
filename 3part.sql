@@ -66,7 +66,7 @@ create table thing (
 create table bonus (
     bonus_id serial primary key,
     thing_id integer references thing (thing_id) on update cascade on delete cascade,
-    rating_scale integer not null check(rating_scale > 0 and rating_scale < 10000)
+    rating_scale integer not null check(rating_scale > 0)
 );
 
 
@@ -220,7 +220,7 @@ RETURNS trigger AS $$
     end;
  $$ LANGUAGE plpgsql;
 
-create trigger rating_count_trigger before insert on rating FOR EACH ROW EXECUTE PROCEDURE rating_count_proc();
+create trigger rating_count_trigger before insert or update on rating FOR EACH ROW EXECUTE PROCEDURE rating_count_proc();
 
 --Тригер устанавливающий время отправки сообщения
 
