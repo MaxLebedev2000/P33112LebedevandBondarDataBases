@@ -24,6 +24,17 @@ create table rating (
     offense_num integer not null
 );
 
+--Тригер подсчитывающий рейтинг на основе его атрибутов
+
+CREATE OR REPLACE FUNCTION rating_count_proc()
+RETURNS trigger AS $$
+    begin
+       new.rating_num = new.rating_num + (new.transactions_num * 10 - new.offense_num * 3);
+       return new;
+    end;
+ $$ LANGUAGE plpgsql;
+
+create trigger rating_count_trigger before insert or update on rating FOR EACH ROW EXECUTE PROCEDURE rating_count_proc();
 
 create table customer (
     customer_id serial primary key,
@@ -208,19 +219,6 @@ RETURNS trigger AS $$
  $$ LANGUAGE plpgsql;
 
  create trigger thing_border_prevent_trigger before insert on thing FOR EACH ROW EXECUTE PROCEDURE thing_border_prevent_proc();
-
-
---Тригер подсчитывающий рейтинг на основе его атрибутов
-
-CREATE OR REPLACE FUNCTION rating_count_proc()
-RETURNS trigger AS $$
-    begin
-       new.rating_num = new.rating_num + (new.transactions_num * 10 - new.offense_num * 3);
-       return new;
-    end;
- $$ LANGUAGE plpgsql;
-
-create trigger rating_count_trigger before insert or update on rating FOR EACH ROW EXECUTE PROCEDURE rating_count_proc();
 
 --Тригер устанавливающий время отправки сообщения
 
