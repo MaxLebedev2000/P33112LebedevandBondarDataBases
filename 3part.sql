@@ -216,6 +216,7 @@ CREATE OR REPLACE FUNCTION rating_count_proc()
 RETURNS trigger AS $$
     begin
        new.rating_num = new.rating_num + (new.transactions_num * 10 - new.offense_num * 3);
+       return new;
     end;
  $$ LANGUAGE plpgsql;
 
