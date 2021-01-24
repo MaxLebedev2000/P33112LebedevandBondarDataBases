@@ -180,7 +180,7 @@ insert into message(sender_nick, recipient_nick, content, send_time) values('Dim
 insert into message(sender_nick, recipient_nick, content, send_time) values('Lexa2010', 'DimasMashina', 'Не хочешь снизить цену на своего крысюка? У тебя уже месяц никто не покупает','2020-12-19 10:25:54');
 insert into message(sender_nick, recipient_nick, content, send_time) values('DimasMashina', 'Lexa2010', 'Не, у меня не горит, могу подождать','2020-12-19 10:26:54');
 --транзакции
-insert into transaction(first_customer_id , sec_customer_id , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values('DimasMashina', 'Lexa2010', 1, null, 1, 'Sale');
+insert into transaction(first_customer_nick , sec_customer_nick , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values('DimasMashina', 'Lexa2010', 1, null, 1, 'Sale');
 
 --Тригер который проверяет если превышено максимальное количество вещей то добавления не происходит    
 CREATE OR REPLACE FUNCTION thing_border_prevent_proc()
@@ -325,8 +325,9 @@ begin
      if (buyer_money >= thing_price) then 
         UPDATE thing t SET customer_nick_name = first_customer_nick, is_selling = false WHERE t.id = selling_thing_id;
         UPDATE paymentmethod p SET customer_balance = (buyer_money - thing_price) WHERE p.customer_nick_name = first_customer_nick;
+        insert into transaction(first_customer_nick , sec_customer_nick , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values(first_customer_nick, sec_customer_nick, selling_thing_id, null, 1, 'Sale');
              select c.customer_nick_name into seller_is_null from customer c where c.customer_nick_name = sec_customer_nick and c.customer_nick_name is null;
-             if (seller_is_null) then 
+             if (!seller_is_null) then 
              select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where sec_customer_nick = c.customer_nick_name;
              UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = sec_customer_nick;
              end if;
