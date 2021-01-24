@@ -172,9 +172,9 @@ insert into character(thing_id, platform_id, character_name, attribute) values(1
 
 
 
-insert into character(thing_id, platform_id, character_name, attribute) values(19, 1, 'Pudge', 'Force'); 
-insert into character(thing_id, platform_id, character_name, attribute) values(20, 1, 'Riki', 'Agility');
-insert into character(thing_id, platform_id, character_name, attribute) values(21, 1, 'Pudge', 'Force');
+insert into character(thing_id, platform_id, character_name, attribute) values(1, 1, 'Pudge', 'Force'); 
+insert into character(thing_id, platform_id, character_name, attribute) values(2, 1, 'Riki', 'Agility');
+insert into character(thing_id, platform_id, character_name, attribute) values(3, 1, 'Pudge', 'Force');
 --способы оплаты клиента и баланс
 insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('Lexa2010','21124412421','Sberbank','Credit card', 28345);
 insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values('DimasMashina','21122312421','Yandex.Money','Yandex.Money', 31345);
