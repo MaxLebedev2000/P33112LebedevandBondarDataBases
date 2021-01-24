@@ -136,13 +136,13 @@ insert into customer(avatar_id , rating_id, platform_id, customer_name, customer
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(4, 3, 1, 'Andrey', 'Shalya','vedroid', 15,'2020-12-18 19:23:54' );
 insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(5, 5, 1,  'Vlad', 'Pomelnikov', 'VladKrutisna2', 14,'2020-12-19 12:23:54' );
 --шмотки
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7832);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers Reel of ', 7832);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('Lexa2010',1, 'Immortal', 'Rippers ', 7832);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Mythical', 'Hunger ofthe Howling Wilds', 1011);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Mythical', 'Hunger ', 1011);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('sixteen',1, 'Immortal', 'Dragonclaw Hook', 63200);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Bracers of Aeons of the Crimson Witness', 33400);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Bracers of Aeons of the ', 33400);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Sylvan Vedette', 2400);
-insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Rippers Reel of the Crimson Witness', 7833);
+insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('vedroid',1, 'Immortal', 'Rippers Reel of the Crimson', 7833);
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('VladKrutisna2',1, 'Immortal', 'Armor of the Demon Trickster', 5600);  
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Mask of the Demon Trickster', 2000); 
 insert into thing(customer_nick_name, platform_id , rarity, thing_name, price) values('DimasMashina',1, 'Immortal', 'Roshan Hunter', 132900); 
@@ -304,37 +304,36 @@ $$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION  customer_information (customer_nick varchar) returns table(customer_id integer,  customer_nick_name varchar, customer_name varchar,  customer_last_name varchar, link_photo  varchar, rating_num integer, credentials varchar, paymentmethod_type paymentmethod_types, customer_balance integer) as $$
+CREATE OR REPLACE FUNCTION  customer_information (customer_nick varchar) returns table(customer_id integer, age integer,  customer_nick_name varchar, customer_name varchar,  customer_last_name varchar, link_photo  varchar, rating_num integer, credentials varchar, paymentmethod_type paymentmethod_types, customer_balance integer) as $$
 begin
-    return query select c.customer_id, c.customer_nick_name, c.customer_name, c.customer_last_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_nick_name) where c.customer_nick_name = customer_nick;
+    return query select c.customer_id, c.age c.customer_nick_name, c.customer_name, c.customer_last_name, a.link_photo, r.rating_num, p.credentials, p.paymentmethod_type, p.customer_balance from customer c join rating r using (rating_id) join avatar a using(avatar_id) join paymentmethod p using(customer_nick_name) where c.customer_nick_name = customer_nick;
 end;
 $$ LANGUAGE plpgsql;  
 
 
 CREATE OR REPLACE FUNCTION  buy_thing (first_customer_nick varchar, sec_customer_nick varchar, selling_thing_id integer) returns void as $$
 declare
-enough_money boolean;
-buyer_money integer;
-seller_money integer;
-thing_price integer;
-seller_is_null boolean = true;
+    enough_money boolean;
+    buyer_money integer;
+    seller_money integer;
+    thing_price integer;
+    seller_is_null boolean = true;
 
 begin
-     select price into thing_price from thing t where t.id = selling_thing_id;
-     select p.customer_balance into buyer_money from customer c join paymentmethod p using(customer_nick_name) where first_customer_nick = c.customer_nick_name;
-     if (buyer_money >= thing_price) then 
-        UPDATE thing t SET customer_nick_name = first_customer_nick, is_selling = false WHERE t.id = selling_thing_id;
+    select price into thing_price from thing t where t.thing_id = selling_thing_id;
+    select p.customer_balance into buyer_money from customer c join paymentmethod p using(customer_nick_name) where first_customer_nick = c.customer_nick_name;
+    if (buyer_money >= thing_price) then
+        UPDATE thing t SET customer_nick_name = first_customer_nick, is_selling = false WHERE t.thing_id = selling_thing_id;
         UPDATE paymentmethod p SET customer_balance = (buyer_money - thing_price) WHERE p.customer_nick_name = first_customer_nick;
         insert into transaction(first_customer_nick , sec_customer_nick , first_thing_id, sec_thing_id, platform_id, transaction_type  ) values(first_customer_nick, sec_customer_nick, selling_thing_id, null, 1, 'Sale');
-             select c.customer_nick_name into seller_is_null from customer c where c.customer_nick_name = sec_customer_nick and c.customer_nick_name is null;
-             if (!seller_is_null) then 
-             select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where sec_customer_nick = c.customer_nick_name;
-             UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = sec_customer_nick;
-             end if;
+        select c.customer_nick_name into seller_is_null from customer c where c.customer_nick_name = sec_customer_nick and c.customer_nick_name is null;
+        if (seller_is_null = true) then
+            select p.customer_balance into seller_money from customer c join paymentmethod p using(customer_nick_name) where sec_customer_nick = c.customer_nick_name;
+            UPDATE paymentmethod p SET customer_balance = (seller_money + thing_price) WHERE p.customer_nick_name = sec_customer_nick;
         end if;
+    end if;
 end;
-$$ LANGUAGE plpgsql;  
-
+$$ LANGUAGE plpgsql;
 
 
 
@@ -355,14 +354,13 @@ $$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION  customer_things (customer_nick varchar) returns  table(thing_id integer, think_name varchar, rarity rarities, customer_nick_name varchar, character_name varchar, price integer) as $$
+CREATE OR REPLACE FUNCTION  customer_things (customer_nick varchar) returns  table(is_selling boolean, thing_id integer, think_name varchar, rarity rarities, customer_nick_name varchar, character_name varchar, price integer) as $$
 begin
-    return query select t.thing_id, t.thing_name, t.rarity, cus.customer_nick_name, cha.character_name, t.price from thing t join customer cus using(customer_nick_name) join character cha using(thing_id) where t.is_selling = false and cus.customer_nick_name = customer_nick;
-end;    
-$$ LANGUAGE plpgsql;  
+    return query select t.is_selling, t.thing_id, t.thing_name, t.rarity, cus.customer_nick_name, cha.character_name, t.price from thing t join customer cus using(customer_nick_name) join character cha using(thing_id) where t.is_selling = false and cus.customer_nick_name = customer_nick;
+end;
+$$ LANGUAGE plpgsql;
 
-
-
+UPDATE paymentmethod t SET customer_balance =3999999 WHERE paymentmethod.customer_nick = 'никнейм';
 
 
 drop FUNCTION thing_info(integer);
@@ -382,6 +380,3 @@ drop table character cascade;
 drop table customer_paymentmethod cascade;
 drop table message cascade;
 drop table transaction cascade;
-
-
-
