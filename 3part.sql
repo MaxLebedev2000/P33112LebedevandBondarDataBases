@@ -369,10 +369,12 @@ CREATE OR REPLACE FUNCTION  register (link_photo varchar, customer_name varchar,
 declare
     new_rating_id integer;
     new_avatar_id integer;
+    new_customer_nickname varchar;
 begin
     insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(1, 0, 7,0) returning rating_id into new_rating_id;
     insert into avatar(link_photo, width, height) values(link_photo, 256, 256) returning avatar_id into new_avatar_id;
-    insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(new_avatar_id, new_rating_id, 1,  customer_name, customer_last_name, customer_nick, age, null );
+    insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(new_avatar_id, new_rating_id, 1,  customer_name, customer_last_name, customer_nick, age, null ) returning customer_nick_name into new_customer_nickname;
+    insert into paymentmethod(customer_nick_name, credentials, paymentmethod_name, paymentmethod_type, customer_balance) values(new_customer_nickname,'21124412421','Sberbank','Credit card', 500000);
 end;
 $$ LANGUAGE plpgsql;
 
