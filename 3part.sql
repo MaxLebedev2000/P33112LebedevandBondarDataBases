@@ -359,36 +359,22 @@ begin
 end;
 $$ LANGUAGE plpgsql; 
 
-
-CREATE OR REPLACE FUNCTION  register (avatar_id integer, customer_name varchar, customer_last_name varchar, customer_nick varchar, age integer ) returns void as $$
-declare
-new_rating_id integer;
-begin
-    insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(0, 0,null ,0);
-    SELECT currval('rating_id') into new_rating_id from rating;
-    insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(avatar_id, new_rating_id, 1,  customer_name, customer_last_name, customer_nick, age, null );
-end;
-$$ LANGUAGE plpgsql;
-
-
-
 CREATE OR REPLACE FUNCTION  customer_things (customer_nick varchar) returns  table(is_selling boolean, thing_id integer, think_name varchar, rarity rarities, customer_nick_name varchar, character_name varchar, price integer) as $$
 begin
     return query select t.is_selling, t.thing_id, t.thing_name, t.rarity, cus.customer_nick_name, cha.character_name, t.price from thing t join customer cus using(customer_nick_name) join character cha using(thing_id) where t.is_selling = false and cus.customer_nick_name = customer_nick;
 end;
 $$ LANGUAGE plpgsql;
 
---не уверен что работает
 CREATE OR REPLACE FUNCTION  register (link_photo varchar, customer_name varchar, customer_last_name varchar, customer_nick varchar, age integer ) returns void as $$
 declare
-new_rating_id integer;
+    new_rating_id integer;
+    new_avatar_id integer;
 begin
-    insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(0, 0, 7,0);
-    SELECT currval('rating_id_seq') into new_rating_id;
-    insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(avatar_id, new_rating_id, 1,  customer_name, customer_last_name, customer_nick, age, null );
+    insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(1, 0, 7,0) returning rating_id into new_rating_id;
+    insert into avatar(link_photo, width, height) values(link_photo, 256, 256) returning avatar_id into new_avatar_id;
+    insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(new_avatar_id, new_rating_id, 1,  customer_name, customer_last_name, customer_nick, age, null );
 end;
 $$ LANGUAGE plpgsql;
-
 
 
 UPDATE paymentmethod t SET customer_balance =3999999 WHERE paymentmethod.customer_nick = 'никнейм';
