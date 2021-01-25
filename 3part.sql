@@ -20,7 +20,7 @@ create table rating (
     rating_id serial primary key,
     rating_num integer not null check(rating_num > 0) default 1,
     transactions_num integer not null,
-    time_decrease_const timestamp not null,
+    time_decrease_const integer not null,
     offense_num integer not null
 );
 
@@ -129,13 +129,13 @@ insert into avatar(link_photo, width, height) values('https://www.flaticon.com/s
 
 -- измени ссылки на фотки плз, у меня короткие не делаются почему-то
 -- рейтинг
-insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(1, 9999,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
-insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(2, 9800,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
-insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(3, 9721,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
-insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(4, 9654,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
-insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(5, 9638,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
-insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(6, 9502,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
-insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(7, 9489,'Wed 17 Dec 07:37:16 1997 PST ' ,0);
+insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(1, 9999, 7,0);
+insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(2, 9800, 7,0);
+insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(3, 9721, 7,0);
+insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(4, 9654, 7,0);
+insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(5, 9638, 7,0);
+insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(6, 9502, 7,0);
+insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(7, 9489, 7,0);
 --торговая площадка
 insert into trading_platform(platform_name, things_border) values('Dota2', 60000);
 insert into trading_platform(platform_name, things_border) values('CSGO', 62000);
@@ -377,6 +377,20 @@ begin
     return query select t.is_selling, t.thing_id, t.thing_name, t.rarity, cus.customer_nick_name, cha.character_name, t.price from thing t join customer cus using(customer_nick_name) join character cha using(thing_id) where t.is_selling = false and cus.customer_nick_name = customer_nick;
 end;
 $$ LANGUAGE plpgsql;
+
+--не уверен что работает
+CREATE OR REPLACE FUNCTION  register (link_photo varchar, customer_name varchar, customer_last_name varchar, customer_nick varchar, age integer ) returns void as $$
+declare
+new_rating_id integer;
+begin
+    insert into rating(rating_num, transactions_num, time_decrease_const, offense_num) values(0, 0, 7,0);
+    SELECT currval('rating_id') into new_rating_id from rating;
+    insert into customer(avatar_id , rating_id, platform_id, customer_name, customer_last_name, customer_nick_name, age, become_offline_time) values(avatar_id, new_rating_id, 1,  customer_name, customer_last_name, customer_nick, age, null );
+end;
+$$ LANGUAGE plpgsql;
+
+
+
 
 UPDATE paymentmethod t SET customer_balance =3999999 WHERE paymentmethod.customer_nick = 'никнейм';
 
